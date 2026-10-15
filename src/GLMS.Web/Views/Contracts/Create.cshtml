@@ -1,0 +1,20 @@
+@model GLMS.Web.Models.Contract
+@using GLMS.Web.Models
+@{
+    ViewData["Title"] = "Add Contract";
+}
+
+<h1>Add contract</h1>
+<form asp-action="Create" method="post" enctype="multipart/form-data" class="col-md-6">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="mb-3"><label asp-for="ClientId" class="form-label"></label><select asp-for="ClientId" asp-items="ViewBag.ClientId" class="form-select"><option value="">Select client</option></select><span asp-validation-for="ClientId" class="text-danger"></span></div>
+    <div class="mb-3"><label asp-for="ServiceLevel" class="form-label"></label><select asp-for="ServiceLevel" class="form-select"><option value="">Select service level</option><option>Standard</option><option>Premium</option></select><span asp-validation-for="ServiceLevel" class="text-danger"></span></div>
+    <div class="mb-3"><label asp-for="StartDate" class="form-label"></label><input asp-for="StartDate" type="date" class="form-control" /></div>
+    <div class="mb-3"><label asp-for="EndDate" class="form-label"></label><input asp-for="EndDate" type="date" class="form-control" /><span asp-validation-for="EndDate" class="text-danger"></span></div>
+    <div class="mb-3"><label asp-for="Status" class="form-label"></label><select asp-for="Status" asp-items="Html.GetEnumSelectList<ContractStatus>()" class="form-select"></select></div>
+    <div class="mb-3"><label class="form-label" for="signedAgreement">Signed agreement (PDF)</label><input class="form-control" type="file" id="signedAgreement" name="signedAgreement" accept="application/pdf,.pdf" /><span class="text-danger" asp-validation-for="SignedAgreementPath"></span></div>
+    <button class="btn btn-primary" type="submit">Save contract</button>
+    <a class="btn btn-outline-secondary" asp-action="Index">Cancel</a>
+</form>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

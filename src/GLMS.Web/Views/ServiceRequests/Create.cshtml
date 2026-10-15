@@ -1,0 +1,52 @@
+@model GLMS.Web.Models.ServiceRequest
+@using GLMS.Web.Models
+@{
+    ViewData["Title"] = "Create Service Request";
+}
+
+<h1>Create service request</h1>
+<form asp-action="Create" method="post" class="col-md-6">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="mb-3"><label asp-for="ContractId" class="form-label"></label><select asp-for="ContractId" asp-items="ViewBag.ContractId" class="form-select"><option value="">Select contract</option></select><span asp-validation-for="ContractId" class="text-danger"></span></div>
+    <div class="mb-3"><label asp-for="Description" class="form-label"></label><textarea asp-for="Description" rows="3" class="form-control"></textarea><span asp-validation-for="Description" class="text-danger"></span></div>
+    <div class="mb-3"><label asp-for="CostUsd" class="form-label"></label><input asp-for="CostUsd" id="costUsd" type="number" min="0" step="0.01" class="form-control" /><span asp-validation-for="CostUsd" class="text-danger"></span></div>
+    <div class="mb-3"><label class="form-label">Current USD to ZAR rate</label><input id="rate" class="form-control" readonly /></div>
+    <div class="mb-3"><label class="form-label">Estimated cost (ZAR)</label><input id="costZar" class="form-control" readonly /></div>
+    <div class="mb-3"><label asp-for="Status" class="form-label"></label><select asp-for="Status" asp-items="Html.GetEnumSelectList<RequestStatus>()" class="form-select"></select></div>
+    <button class="btn btn-primary" type="submit">Save request</button>
+    <a class="btn btn-outline-secondary" asp-action="Index">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        let currentRate = 0;
+        const usdInput = document.getElementById("costUsd");
+        const rateInput = document.getElementById("rate");
+        const zarInput = document.getElementById("costZar");
+
+        async function loadRate() {
+            try {
+                const response = await fetch('@Url.Action("GetUsdToZarRate")');
+                if (!response.ok) {
+                    rateInput.value = "Unavailable";
+                    return;
+                }
+                const data = await response.json();
+                currentRate = data.rate;
+                rateInput.value = currentRate.toFixed(4);
+                updateZar();
+            } catch {
+                rateInput.value = "Unavailable";
+            }
+        }
+
+        function updateZar() {
+            const usd = Number(usdInput.value);
+            zarInput.value = Number.isFinite(usd) && currentRate > 0 ? (usd * currentRate).toFixed(2) : "";
+        }
+
+        usdInput.addEventListener("input", updateZar);
+        loadRate();
+    </script>
+}

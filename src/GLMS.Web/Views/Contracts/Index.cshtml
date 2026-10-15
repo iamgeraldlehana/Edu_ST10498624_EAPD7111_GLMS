@@ -1,0 +1,53 @@
+@model GLMS.Web.ViewModels.ContractIndexViewModel
+@using GLMS.Web.Models
+@{
+    ViewData["Title"] = "Contracts";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Contracts</h1>
+    <a class="btn btn-primary" asp-action="Create">Add contract</a>
+</div>
+
+<form method="get" class="row g-2 mb-4">
+    <div class="col-md-3"><label asp-for="Status" class="form-label"></label><select asp-for="Status" asp-items="Html.GetEnumSelectList<ContractStatus>()" class="form-select"><option value="">All statuses</option></select></div>
+    <div class="col-md-3"><label class="form-label">Start date from</label><input name="startDate" value="@Model.StartDate?.ToString("yyyy-MM-dd")" type="date" class="form-control" /></div>
+    <div class="col-md-3"><label class="form-label">End date to</label><input name="endDate" value="@Model.EndDate?.ToString("yyyy-MM-dd")" type="date" class="form-control" /></div>
+    <div class="col-md-3 d-flex align-items-end"><button class="btn btn-outline-primary" type="submit">Filter</button></div>
+</form>
+
+<table class="table table-striped">
+    <thead><tr><th>Client</th><th>Service level</th><th>Start</th><th>End</th><th>Status</th><th>Agreement</th></tr></thead>
+    <tbody>
+    @foreach (var contract in Model.Contracts)
+    {
+        <tr>
+            <td>@contract.Client?.Name</td><td>@contract.ServiceLevel</td><td>@contract.StartDate.ToString("yyyy-MM-dd")</td><td>@contract.EndDate.ToString("yyyy-MM-dd")</td>
+            <td>
+                <form asp-action="ChangeStatus" method="post" class="d-flex gap-2">
+                    <input type="hidden" name="id" value="@contract.Id" />
+                    <select name="status" aria-label="Contract @contract.Id status" class="form-select">
+                        @foreach (var status in Enum.GetValues<ContractStatus>())
+                        {
+                            <option value="@status" selected="@(status == contract.Status)">@status</option>
+                        }
+                    </select>
+                    <button type="submit" class="btn btn-outline-primary">Save</button>
+                </form>
+            </td>
+            <td>@if (contract.SignedAgreementPath is not null) { <a asp-action="DownloadAgreement" asp-route-id="@contract.Id">Download PDF</a> }</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<h2>Recent department updates</h2>
+<table class="table">
+    <thead><tr><th>Contract</th><th>Department</th><th>Update</th></tr></thead>
+    <tbody>
+    @foreach (var notification in Model.Notifications)
+    {
+        <tr><td>@notification.ContractId</td><td>@notification.Department</td><td>@notification.Message</td></tr>
+    }
+    </tbody>
+</table>

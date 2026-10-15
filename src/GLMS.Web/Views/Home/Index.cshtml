@@ -1,0 +1,13 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="py-4">
+    <h1>TechMove Global Logistics Management System</h1>
+    <p class="lead">Manage clients, contracts and logistics service requests.</p>
+    <div class="d-flex gap-2 flex-wrap">
+        <a class="btn btn-primary" asp-controller="Clients" asp-action="Create">Add client</a>
+        <a class="btn btn-primary" asp-controller="Contracts" asp-action="Create">Add contract</a>
+        <a class="btn btn-primary" asp-controller="ServiceRequests" asp-action="Create">Create service request</a>
+    </div>
+</div>

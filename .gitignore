@@ -1,0 +1,9 @@
+.tools/
+**/bin/
+**/obj/
+**/TestResults/
+**/wwwroot/uploads/
+.vs/
+.DS_Store
+**/appsettings.Local.json
+*.zip
